@@ -8,5 +8,5 @@ edition = "2021"
 [dependencies]
 tokio = { version = "1", features = ["full"] }
 async-graphql = { version = "7" }
-async-graphql-poem = { version = "7" }
-poem = { version = "2.0" }
+async-graphql-axum = { version = "7" }
+axum = { version = "0.7" }
