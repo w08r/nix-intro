@@ -9,8 +9,8 @@ run: build
 dev:
     nix develop
 
-lock:
-    nix flake lock --update-input cargo2nix
-
 cargo2nix:
     nix run github:cargo2nix/cargo2nix
+
+lock: cargo2nix
+    nix flake lock
