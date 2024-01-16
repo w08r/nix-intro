@@ -17,6 +17,7 @@ up a `flake.nix` that looks something like this:
 
   };
 }
+```
 
 Running `nix run` you may or may not get some sensible output.  Running on an m1 I get the following:
 
