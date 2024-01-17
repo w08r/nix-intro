@@ -153,4 +153,107 @@ $ which hello-flake
 
 $ nix profile list | rg hello-flake
 32 git+file:///me/nix-intro?dir=hello-flake#packages.aarch64-darwin.default git+file:///me/nix-intro?dir=hello-flake#packages.aarch64-darwin.default /nix/store/axs6h57bkwa2r137m8gh93psvbb99m1k-hello
+
+$ nix profile remove 32
+$
 ```
+
+## A standard approach
+
+Writing derivations by hand can be tiresome.  There are some great
+convenience options for more standard patterns.  The following steps
+will take you through building the hello-flake binary based on the
+unix standard tooling.  The files used are present in the local
+working directory so you don't need to much around setting up the
+necessary input files.
+
+From the current directory, you can do the following, note the unsurprising output:
+
+```
+$ nix build       
+
+$ ./result/bin/hello-flake                                                            
+Hello, (flake)!
+```
+
+So what's going on?  Well, examining the flake, we see the following:
+
+```
+{
+  description = "A simple unix program";
+
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+
+  outputs = { self, nixpkgs, flake-utils }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        p = nixpkgs.legacyPackages.${system};
+      in
+        {
+          packages = {
+            default = p.stdenv.mkDerivation {
+              name = "hello-flake";
+              src = ./hello-flake.tar;
+            };
+          };
+        }
+    );
+}
+```
+
+For a start, we've not specified the local system.  That's a win but
+we'll explore that later.  The default package is specified using the
+`mkDerivation` function from `stdend`; it takes just a name and the
+location of a source tarball.  The source tarball looks like a simple
+(if minimal) autotools based program, that would expect the user to
+run `./configure` followed by `make` and then `make install`.  Nix
+expects you to want to do this.  It defines a set of functions by
+default that are invoked, as described here:
+https://nixos.org/manual/nixpkgs/stable/#sec-stdenv-phases.
+
+The configure phase looks like this:
+
+```
+$ nix develop
+$ type configurePhase 
+configurePhase is a function
+configurePhase () 
+{ 
+    runHook preConfigure;
+    : "${configureScript=}";
+    if [[ -z "$configureScript" && -x ./configure ]]; then
+        configureScript=./configure;
+    fi;
+    if [ -z "${dontFixLibtool:-}" ]; then
+        export lt_cv_deplibs_check_method="${lt_cv_deplibs_check_method-pass_all}";
+        local i;
+
+...
+```
+
+The build phase looks like this:
+
+```
+$ nix develop
+$ type buildPhase
+buildPhase is a function
+buildPhase () 
+{ 
+    runHook preBuild;
+    if [[ -z "${makeFlags-}" && -z "${makefile:-}" && ! ( -e Makefile || -e makefile || -e GNUmakefile ) ]]; then
+        echo "no Makefile or custom buildPhase, doing nothing";
+    else
+        foundMakefile=1;
+        local flagsArray=(${enableParallelBuilding:+-j${NIX_BUILD_CORES}} SHELL=$SHELL);
+        _accumFlagsArray makeFlags makeFlagsArray buildFlags buildFlagsArray;
+        echoCmd 'build flags' "${flagsArray[@]}";
+        make ${makefile:+-f $makefile} "${flagsArray[@]}";
+        unset flagsArray;
+    fi;
+    runHook postBuild
+}
+```
+
+There are likewise phases for other standard aspects of package
+building.  These can all be fine tuned by overriding some of the
+defaults to the `mkDerivation` function.
