@@ -1,3 +1,6 @@
 .direnv/
-rs-gql/target
 result-bin
+
+hello-flake/result
+
+rs-gql/target
