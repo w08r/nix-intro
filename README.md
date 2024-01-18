@@ -8,6 +8,8 @@ alternative workflow and tooling.
   as a playground.
 - [Hello (Flake)!](./hello-flake) looks at a simple development
   environment based on historic unix standards.
+- [ Nix and Flake-utils](./nix-flake-utils) Introduces some of the nix
+  language along with starting to delve into the flake utils library.
 - [Direnv integration](./direnv) walks you through the development
   experience brought to you by nix flakes and direnv.
 - [Rust, Grapql, Nix, Docker](./rs-gql) explores setting up a
