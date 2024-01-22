@@ -1,0 +1,40 @@
+name: "build"
+
+on:
+  push:
+    paths:
+      - '.github/**' ## catch build system changes
+      - 'rs-gql/**'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - uses: cachix/install-nix-action@v22
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+
+    # override nix store for the build to be /tmp/nix-store as
+    # there are permissions errors restoring to /nix/store
+
+    - uses: actions/cache/restore@v4
+      id: restore-nix-cache
+      with:
+        path: |
+          /tmp/nix-store
+        key: nix-cache-${{ hashFiles('rs-gql/*.lock') }}
+
+    - run: nix build --store /tmp/nix-store .#nix-gql-rs
+      working-directory: rs-gql
+
+    - uses: actions/cache/save@v4
+      id: save-nix-cache
+      with:
+        path: |
+          /tmp/nix-store
+        key: nix-cache-${{ hashFiles('rs-gql/*.lock') }}
