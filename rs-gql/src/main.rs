@@ -5,6 +5,7 @@ use async_graphql::{
     Object,
     Schema
 };
+
 use axum::{
     routing::get,
     response::{self, IntoResponse},
@@ -25,6 +26,7 @@ impl QueryRoot {
 async fn graphiql() -> impl IntoResponse {
     response::Html(GraphiQLSource::build().endpoint("/").finish())
 }
+
 #[tokio::main]
 async fn main() {
     let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
