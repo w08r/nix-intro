@@ -53,3 +53,16 @@ Go to http://localhost:8000 to view the graphiql page.  The following query shou
   howdy 
 }
 ```
+
+## Github Actions
+
+The github action workflow for this sub project highlights the
+simplicity of caching nix dependencies.  Whilst the dependencies for
+the flake herein span the rust toolchain, side tooling and the crate
+dependencies themselves, all the compilation pre-requisites are
+declared and pinned as part of the flake config and lock file.  That
+means that caching the nix store after a build is all that needs to be
+done to provide speedy incremental compilation of the whole project.
+At time of writing, the non-cached build takes around 5 minutes and
+the cached one takes about 1 minute which is a nice improve for a tiny
+hello world app.
