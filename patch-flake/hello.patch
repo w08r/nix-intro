@@ -1,0 +1,12 @@
+diff --git a/hello-flake.c b/hello-flake.c
+index 8e7431d..8d27ffb 100644
+--- a/hello-flake.c
++++ b/hello-flake.c
+@@ -1,6 +1,6 @@
+ #include <stdio.h>
+ 
+ int main() {
+-  printf("Hello, (flake)!\n");
++  printf("Hello, (flake patched)!\n");
+   return 0;
+ }
