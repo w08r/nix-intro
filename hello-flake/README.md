@@ -203,7 +203,7 @@ So what's going on?  Well, examining the flake, we see the following:
 
 For a start, we've not specified the local system.  That's a win but
 we'll explore that later.  The default package is specified using the
-`mkDerivation` function from `stdend`; it takes just a name and the
+`mkDerivation` function from `stdenv`; it takes just a name and the
 location of a source tarball.  The source tarball looks like a simple
 (if minimal) autotools based program, that would expect the user to
 run `./configure` followed by `make` and then `make install`.  Nix
