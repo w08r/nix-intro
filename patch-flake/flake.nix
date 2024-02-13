@@ -3,7 +3,7 @@
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.hello-flake.url = "github:w08r/nix-intro?dir=hello-flake";
-  inputs.patch-flake.url = "github:jfgr27/nix-intro?dir=patch-flake&ref=patch-flake";
+  inputs.patch-flake.url = "github:jfgr27/nix-intro?dir=patch-flake&ref=patch-flake&rev=0fb132c7ea4d45832275a0c45ec03a3f5b69b614";
 
   outputs = { self, nixpkgs, flake-utils, hello-flake, patch-flake }:
     flake-utils.lib.eachDefaultSystem (system:
