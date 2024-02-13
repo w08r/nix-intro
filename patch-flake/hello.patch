@@ -1,6 +1,6 @@
-diff --git a/src/hello-flake.c b/src/hello-flake.c
---- a/src/hello-flake.c
-+++ b/src/hello-flake.c
+diff --git a/hello-flake.c b/hello-flake.c
+--- a/hello-flake.c
++++ b/hello-flake.c
 @@ -1,6 +1,6 @@
  #include <stdio.h>
  
