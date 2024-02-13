@@ -5,29 +5,66 @@
 This is particularly useful if one of your packages has a known issue and you can't wait until the fix to be released. 
 
 
-Following on [hello-nix](../hello-nix/README.md), we can import `../hello-nix/flake.nix` and provide the following patch
+Following on [hello-nix](../hello-nix/README.md), we can patch remote`../hello-nix` flake and provide the following patch:
 
 ```nix
 {
-  description = "A simple unix program";
+  description = "A very basic flake patchs";
 
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  
+  inputs.hello-flake.url = "github:w08r/nix-intro?dir=hello-flake";
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, hello-flake }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        p = nixpkgs.legacyPackages.${system};
+        pkgs = nixpkgs.legacyPackages.${system};
+
+
+        hello-flake-patch = pkgs.stdenv.mkDerivation {
+            name = "hello-flake-patch";
+            src = "${hello-flake}/hello-flake.tar";
+            patches = [ ./hello.patch ];
+            system = system;
+          };
       in
         {
-          packages = {
-            default = p.stdenv.mkDerivation {
-              name = "hello-flake";
-              src = ./hello-flake.tar;
+          devShells = rec {
+            default = pkgs.mkShell {
+              packages = [
+                hello-flake-patch
+              ];
             };
           };
         }
     );
 }
+```
+provided `./hello.patch`
+
+```git
+diff --git a/hello-flake.c b/hello-flake.c
+--- a/hello-flake.c
++++ b/hello-flake.c
+@@ -1,6 +1,6 @@
+ #include <stdio.h>
+ 
+ int main() {
+-  printf("Hello, (flake)!\n");
++  printf("Hello, (flake patched)!\n");
+   return 0;
+ }
 
 ```
+
+This will patch the flake according to the `git diff`. This results in 
+
+```bash
+nix develop
+
+# inside nix shell
+User1:patch-flake user1$ hello-flake
+Hello, (flake patched)!
+```
+
+
+
