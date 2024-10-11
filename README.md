@@ -16,7 +16,8 @@ stable) alternative workflow and tooling.
   experience brought to you by nix flakes and direnv.
 - [Rust, Grapql, Nix, Docker](./rs-gql) explores setting up a
   development and build environment for a web service.
-
+- [Spark, Mill and Overrides](./spark) explores overriding some
+  default attributes of an existing package to ensure uniformity.
 ## Digging Deeper
 
 The next section takes a closer look at some of the different areas of
